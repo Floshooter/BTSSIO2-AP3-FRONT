@@ -1,0 +1,50 @@
+@import 'root.css';
+
+.banner {
+    min-height: 150px;
+    padding: auto;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-header);
+    color: #fff;
+    border-bottom: solid 5px black transparent;
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+}
+
+.banner .banner1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.banner .banner1 h1 {
+    text-align: center;
+    color: #fff;
+}
+
+.banner .liens .lien{
+    color: black;
+    padding: 15px;
+    text-decoration: none;
+}
+.banner .liens .lien:hover {
+    color: blue;
+}
+.banner .liens .button {
+    margin-right: 5px;
+}
+
+.banner .account #dropdown-item-button:hover {
+    color: black;
+}
+.banner .account .title-action {
+    text-align: center;
+    color: black;
+    text-decoration:overline blue
+}
+.banner .account .lien {
+    text-decoration: none;
+}
+.banner .account .action:hover {
+    color: blue;
+}

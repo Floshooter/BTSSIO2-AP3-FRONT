@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-header: rgba(0, 0, 0, 1);
+    --main: rgb(136, 136, 136);
+    --second: #eeeeee;
+    --back: #f8f8f8;
+}

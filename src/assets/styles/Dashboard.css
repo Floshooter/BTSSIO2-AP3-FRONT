@@ -1,0 +1,53 @@
+@import '../../assets/styles/root.css';
+
+.dashboard {
+    margin: 50px;
+}  
+
+.button-dashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.displayedChoice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    padding: 5px;
+    border: solid 1px;
+    border-radius: 5px;
+    background-color: var(--back);
+}
+.displayedChoice .btn-displayed {
+    width: auto;
+    margin: 5px;
+    padding: 0.25rem 1.5rem;
+    line-height: 1.5;
+}
+
+.horizontal-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.horizontal-layout p {
+    margin: 0; 
+    text-align: center;
+    margin-left: 15px; 
+    margin-right: 15px; 
+  }
+
+.btn-sm {
+    padding: 0.25rem 1.5rem;
+    margin: 0.25rem;
+    line-height: 1.5;
+    border-radius: 0.5rem;
+    width: 100%;
+}
+.button-dashboard i {
+    font-size: 1rem;
+}
+.btn-submit {
+    width: 100%;
+}

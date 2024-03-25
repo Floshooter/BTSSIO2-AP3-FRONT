@@ -1,0 +1,58 @@
+@import 'root.css';
+
+.banner {
+    min-height: 150px;
+    padding: auto;
+    font-family: 'Poppins', sans-serif;
+    background: var(--main) transparent;
+    color: black;
+    border-bottom: solid 5px black transparent;
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+}
+
+/* Partie gauche */
+.banner .banner1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+/* .banner .banner1 img {
+    width: 50px;
+    height: 50px;
+} */
+.banner .banner1 h1 {
+    text-align: center;
+}
+
+/* Partie mid */
+.banner .liens .lien{
+    color: black;
+    padding: 15px;
+    text-decoration: none;
+}
+.banner .liens .lien:hover {
+    color: white;
+}
+.banner .liens .button {
+    margin-right: 5px;
+}
+/* .banner .liens .button {
+    margin-right: 5px;
+} */
+
+/* Partie droite */
+.banner .account #dropdown-item-button:hover {
+    color: white;
+}
+.banner .account .title-action {
+    text-align: center;
+    color: var(--main);
+}
+.banner .account .lien {
+    text-decoration: none;
+}
+.banner .account .action:hover {
+    color: #0dcaf0;
+}
