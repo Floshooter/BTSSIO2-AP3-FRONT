@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 // Components
 import '../../assets/styles/Login.css';
 
-const url = 'http://localhost:8001/users/login';
+const url = 'http://192.168.1.28:8001/users/login';
 function Login() {
     const [loginData, setLoginData] = useState({
         email: '',

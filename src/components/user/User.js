@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 
 import pdp from '../../assets/image/pdp.png';
-const url = 'http://localhost:8001/users';
+const url = 'http://192.168.1.28:8001/users';
 
 // Fonction pour renommer les champs
 const fieldNames = {

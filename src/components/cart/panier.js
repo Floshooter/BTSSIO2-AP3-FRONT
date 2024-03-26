@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../assets/styles/panier.css';
-const url = 'http://localhost:8001';
+const url = 'http://192.168.1.28:8001';
 
 function Cart({userData}) {
   const [items, setItems] = useState([]);

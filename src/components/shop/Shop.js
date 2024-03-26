@@ -5,7 +5,7 @@ import { Card, ListGroup, Button } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const url = 'http://localhost:8001';
+const url = 'http://192.168.1.28:8001';
 const Shop = ({ userData }) => {
   const [items, setItems] = useState([]);
   const [cart, setCart] = useState([]);
@@ -36,7 +36,7 @@ const Shop = ({ userData }) => {
         basePrice: item.price,
         userId: userData.userId
       };
-      const response = await axios.post('http://localhost:8001/article/add', article);
+      const response = await axios.post('http://192.168.1.28:8001/article/add', article);
       console.log('Response from server:', response);
       console.log('Data from server:', response.data);
       toast.success('Le produit a été ajouté au favoris', {

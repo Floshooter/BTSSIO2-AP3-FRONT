@@ -6,7 +6,7 @@ import countryData from '../../assets/country.json';
 import { Form, InputGroup, Button, Card, FloatingLabel, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 
-const userURL = 'http://localhost:8001/users/inscription';
+const userURL = 'http://192.168.1.28:8001/users/inscription';
 const CompletingBar = 50;
 
 function Register() {

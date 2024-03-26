@@ -6,7 +6,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const url = 'http://localhost:8001'
+const url = 'http://192.168.1.28:8001'
 const Dashboard = ({userData}) => {
     // Variables
     const [items, setItems] = useState([]);
