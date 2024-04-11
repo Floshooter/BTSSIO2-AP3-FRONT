@@ -107,7 +107,7 @@ const Shop = ({ userData }) => {
           ))}
         </div>
       )}
-      {items && userData && !userData.isConnected && (
+      {items && userData && !userData.isConnected || userData === null && (
         <div className="card-grid-container">
           {items.map((item, index) => (
             <Card key={index} style={{ width: '18rem' }}>
