@@ -3,7 +3,7 @@ import '../../assets/styles/Header.css';
 import { Link } from 'react-router-dom';
 import { Button, Dropdown, DropdownButton, DropdownDivider } from 'react-bootstrap';
 
-
+const logo = require('../../assets/image/Logo_M2L.png');
 function Header({userData}) {
   
   const handleLogout = () => {
@@ -14,7 +14,7 @@ function Header({userData}) {
   return (
     <div className='banner'>
         <div className='banner1'>
-          <h1>M2L</h1>
+        <img src={logo} alt="Logo M2L"/>
         </div>
         <div className='liens'>
           <Button variant="light" className='button'><Link to="/" className='lien'>Home</Link></Button>
