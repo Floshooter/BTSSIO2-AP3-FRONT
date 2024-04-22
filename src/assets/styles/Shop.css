@@ -1,8 +1,25 @@
 @import 'root.css';
 
-.card-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin: 1.5rem;
+.shop-container {
+    padding-top: 20px;
 }
+  
+.card-img {
+    height: 200px;
+    object-fit: cover;
+}
+  
+.card-text {
+    font-size: 18px;
+}
+  
+  @media (max-width: 767px) {
+    .card-img {
+      height: 150px;
+    }
+  
+    .card-text {
+      font-size: 14px;
+    }
+}
+  

@@ -1,5 +1,5 @@
 import '../../assets/styles/Dashboard.css';
-import { Table, Form, InputGroup, Button, Card, FloatingLabel, Toast } from 'react-bootstrap';
+import { Table, Form, InputGroup, Button, Card, FloatingLabel, Toast, Modal } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import { v4 } from 'uuid'
 import axios from 'axios';
@@ -19,17 +19,21 @@ const Dashboard = ({userData}) => {
         email: '',
         password: '',
         confpassword: ''
-  });
-  const [formDataItem, setFormDataItem] = useState({
-      item_name: '',
-      id_category: '',
-      description: '',
-      price: '',
-      stocks: '',
-      thumbnail: ''
-  })
-  const [passwordError, setPasswordError] = useState('');
-  
+    });
+    const [formDataItem, setFormDataItem] = useState({
+        item_name: '',
+        id_category: '',
+        description: '',
+        price: '',
+        stocks: '',
+        thumbnail: ''
+    })
+    const [passwordError, setPasswordError] = useState('');
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [modifyField, setModifyField] = useState('');
+    const [newValue, setNewValue] = useState('');
+    const [showModifyDialog, setShowModifyDialog] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confpassword) {
@@ -42,12 +46,12 @@ const Dashboard = ({userData}) => {
       return;
     }
     try {
-      const response = await axios.post(`${url}/users/addemployee`,formData);
+      const response = await axios.post(`${url}/users/addemployee`,formData, {headers: {Authorization: `${localStorage.getItem('token')}`}});
       console.log(response)
 
       if (response.status === 200) {
         alert('Compte créé');
-        window.location.href = '/';
+        window.location.href = '/dashboard';
       } else {
         console.error('Erreur lors de la création du compte :', response.statusText);
       }
@@ -57,29 +61,50 @@ const Dashboard = ({userData}) => {
   }
   const handleSubmitAddItem = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('item_name', formDataItem.item_name);
+    formData.append('description', formDataItem.description);
+    formData.append('stocks', formDataItem.stocks);
+    formData.append('price', formDataItem.price);
+    formData.append('id_category', formDataItem.id_category);
+    formData.append('thumbnail', formDataItem.thumbnail);
+
     try {
-      const response = await axios.post(`${url}/boutique/additem`,formDataItem);
-      console.log(response)
-      if (response.status === 200) {
-        alert('Item ajouté');
-        window.location.href = '/dashboard';
-      } else {
-        console.error('Erreur lors de l\'ajout d\'un item :', response.statusText);
-      }
+        const response = await axios.post(`${url}/boutique/additem`, formData, {
+            headers: {
+                Authorization: `${localStorage.getItem('token')}`,
+            }
+        });
+        console.log(response);
+        if (response.status === 200) {
+            alert('Item ajouté');
+            window.location.href = '/dashboard';
+        } else {
+            console.error('Erreur lors de l\'ajout d\'un item :', response.statusText);
+        }
     } catch (error) {
-      console.error('Error during item addition:', error);
+        console.error('Error during item addition:', error);
     }
-  }
+};
+
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value})
   }
   const handleChangeItem = (e) => {
-    setFormDataItem({...formDataItem, [e.target.name]: e.target.value})
+    if (e.target.name === 'thumbnail') {
+      setFormDataItem({...formDataItem, thumbnail: e.target.files[0]});
+    } else {
+      setFormDataItem({...formDataItem, [e.target.name]: e.target.value});
+    }
   }
 
     const fetchUsers = async () => {
         try {
-            const users = await axios.get(`${url}/users/`)
+            const users = await axios.get(`${url}/users/`, {
+                headers: {
+                    Authorization: `${localStorage.getItem('token')}`
+                }
+            })
             console.log({'users': users.data})
             setUsers(users.data);
         } catch (error) {
@@ -88,13 +113,57 @@ const Dashboard = ({userData}) => {
     }
     const fetchItems = async () => {
         try {
-            const items = await axios.get(`${url}/boutique`)
+            const items = await axios.get(`${url}/boutique`, {
+                headers: {
+                    Authorization: `${localStorage.getItem('token')}`
+                }
+            })
             console.log({'items': items.data})
             setItems(items.data);
         } catch (error) {
             console.error('Error fetching items:', error);
         }
     }
+
+    const openModifyDialog = (item) => {
+        setSelectedItem(item);
+        setShowModifyDialog(true);
+    }
+
+    const closeModifyDialog = () => {
+        setShowModifyDialog(false);
+        setSelectedItem(null);
+        setModifyField('');
+        setNewValue('');
+    }
+
+    const handleModify = async () => {
+        try {
+            const response = await axios.put(
+                `${url}/boutique/updateitem/${selectedItem.id_items}`,
+                {
+                    field: modifyField,
+                    value: newValue
+                },
+                {
+                    headers: {
+                        Authorization: `${localStorage.getItem('token')}`
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                toast.success('Modification enregistrée');
+                fetchItems();
+                closeModifyDialog();
+            } else {
+                console.error('Erreur lors de la modification :', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la modification:', error);
+        }
+    };
+
     useEffect(() => {
         fetchUsers();
         fetchItems()
@@ -102,7 +171,11 @@ const Dashboard = ({userData}) => {
 
     const deleteItem = async (itemId) => {
         try {
-            const response = await axios.delete(`${url}/boutique/deleteitem/${itemId}`);
+            const response = await axios.delete(`${url}/boutique/deleteitem/${itemId}`, {
+                headers: {
+                    Authorization: `${localStorage.getItem('token')}`
+                }
+            });
             if (response.status === 200) {
                 toast.success('L\'item a été supprimé', {
                     position: "top-right",
@@ -119,6 +192,31 @@ const Dashboard = ({userData}) => {
             }
         } catch (error) {
             console.error('Error during item deletion:', error);
+        }
+    }
+    const deleteUser = async (userId) => {
+        try {
+            const response = await axios.delete(`${url}/users/deleteUser/${userId}`, {
+                headers: {
+                    Authorization: `${localStorage.getItem('token')}`
+                }
+            });
+            if (response.status === 200) {
+                toast.success('L\'utilisateur a été supprimé', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+            } else {
+                console.error('Erreur lors de la suppression de l\'utilisateur :', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during user deletion:', error);
         }
     }
     
@@ -183,7 +281,7 @@ const Dashboard = ({userData}) => {
                                                     <Button className="button-dashboard btn-sm" variant="primary">
                                                         <i className="bi bi-pen"></i> Modifier
                                                     </Button>
-                                                    <Button className="button-dashboard btn-sm" variant="danger">
+                                                    <Button className="button-dashboard btn-sm" variant="danger" onClick={() => deleteUser(user.id)}>
                                                         <i className="bi bi-trash3-fill"></i>Supprimer
                                                     </Button>
                                                 </>
@@ -231,7 +329,7 @@ const Dashboard = ({userData}) => {
                         <tbody>
                             {items.map((item) => (
                                 <tr key={item.id}>
-                                    <td>{item.id}</td>
+                                    <td>{item.id_items}</td>
                                     <td>{item.id_category === 0 ? 'Inconnue' : item.id_category === 1 ? 'Football' : item.id_category === 2 ? 'Basketball' : item.id_category === 3 ? 'Tennis' : item.id_category === 4 ? 'Tennis de table' : item.id_category === 5 ? 'Volleyball' : item.id_category === 6 ? 'Golf' : 'Autre'}</td>
                                     <td>{item.item_name}</td>
                                     <td>{item.description}</td>
@@ -239,10 +337,10 @@ const Dashboard = ({userData}) => {
                                     <td>{item.thumbnail}</td>
                                     <td>{item.price}€</td>
                                     <td className="horizontal-layout">
-                                        <Button className="button-dashboard btn-sm" variant="primary">
+                                        <Button className="button-dashboard btn-sm" variant="primary"  onClick={() => openModifyDialog(item)}>
                                             <i className="bi bi-pen"></i> Modifier
                                         </Button>
-                                        <Button className="button-dashboard btn-sm" variant="danger" onClick={() => deleteItem(item.id)}>
+                                        <Button className="button-dashboard btn-sm" variant="danger" onClick={() => deleteItem(item.id_items)}>
                                             <i className="bi bi-trash3-fill"></i>Supprimer
                                         </Button>
                                     </td>
@@ -344,7 +442,7 @@ const Dashboard = ({userData}) => {
                     <Card className="register-form-card">
                         <Card.Body>
                             <Card.Title>Ajouter un item</Card.Title>
-                            <Form onSubmit={handleSubmitAddItem}>
+                            <Form onSubmit={handleSubmitAddItem} enctype="multipart/form-data">
                             <InputGroup className="mb-3">
                                 <InputGroup.Text><i className="bi bi-person-fill"></i></InputGroup.Text>
                                 <FloatingLabel label="Nom de l'item *">
@@ -398,6 +496,7 @@ const Dashboard = ({userData}) => {
                                 <FloatingLabel label="Price *">
                                 <Form.Control 
                                     type="number"
+                                    pattern="^\d*(\.\d{0,2})?$"
                                     placeholder="Price"
                                     aria-label="price"
                                     name='price'
@@ -431,6 +530,36 @@ const Dashboard = ({userData}) => {
                     </Card>
                 )}
             </div>
+            <Modal show={showModifyDialog} onHide={closeModifyDialog}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modifier l'item</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group controlId="modifyField">
+                        <Form.Label>Champ à modifier</Form.Label>
+                        <Form.Control as="select" onChange={(e) => setModifyField(e.target.value)}>
+                            <option value="">Sélectionnez un champ</option>
+                            <option value="item_name">Nom</option>
+                            <option value="description">Description</option>
+                            <option value="stocks">Stocks</option>
+                            <option value="price">Prix</option>
+                            <option value="id_category">Catégorie</option>
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group controlId="newValue">
+                        <Form.Label>Nouvelle valeur</Form.Label>
+                        <Form.Control type="text" value={newValue} onChange={(e) => setNewValue(e.target.value)} />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={closeModifyDialog}>
+                        Annuler
+                    </Button>
+                    <Button variant="primary" onClick={handleModify}>
+                        Enregistrer
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };

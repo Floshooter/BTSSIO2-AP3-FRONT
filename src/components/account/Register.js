@@ -7,7 +7,6 @@ import { Form, InputGroup, Button, Card, FloatingLabel, ProgressBar } from 'reac
 import { Link } from 'react-router-dom'
 
 const userURL = 'http://192.168.1.28:8001/users/inscription';
-const CompletingBar = 50;
 
 function Register() {
   const [formData, setFormData] = useState({

@@ -11,7 +11,11 @@ function Cart({userData}) {
     const fetchItems = async () => {
       try {
         if(userData && userData.userId) {
-          const response = await axios.get(`${url}/article/getCart/${userData.userId}`);
+          const response = await axios.get(`${url}/article/getCart/${userData.userId}`, {
+            headers: {
+              Authorization: `${localStorage.getItem('token')}`
+            }
+          });
           const itemsArray = Object.values(response.data)
           setItems(itemsArray[0]);
           const calculatedTotalPrice = itemsArray[0].reduce((accumulator, item) => {
@@ -37,7 +41,17 @@ function Cart({userData}) {
         console.error('L\'userId n\'est pas défini.');
         return;
       }
-      await axios.delete(`${url}/deleteUserItem/${itemId}`, { data: { userId } });
+      await axios.delete(
+        `${url}/article/deleteUserItem/${itemId}`,
+        {
+            headers: {
+                Authorization: localStorage.getItem('token')
+            },
+            data: {
+                userId: userId
+            }
+        }
+      );
       setItems(items.filter(item => item.id !== itemId));
       alert('Item supprimé du panier');
       window.location.href = '/mon-compte/panier';
@@ -48,9 +62,14 @@ function Cart({userData}) {
 
   const handleValidateCart = async () => {
     try {
-      const response = await axios.delete(`${url}/article/deleteUserCart/${userData.userId}`);
+      const response = await axios.delete(`${url}/article/deleteUserCart/${userData.userId}`, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`
+        }
+      });
       console.log('Réponse du serveur:', response.data);
       alert('Panier validé avec succès !');
+      window.location.href = '/mon-compte/panier';
     } catch (error) {
       console.error('Erreur lors de la validation du panier : ', error);
       alert('Erreur lors de la validation du panier. Veuillez réessayer plus tard.');
@@ -79,7 +98,7 @@ function Cart({userData}) {
         </>
       )}
       {items.length === 0 && (
-        <p>Il y a encore rien dans le pa</p>
+        <p>Il y a encore rien dans le panier.</p>
       )}
     </div>
   );

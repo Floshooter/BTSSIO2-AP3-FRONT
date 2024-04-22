@@ -23,7 +23,10 @@ function User({userData}) {
   const fetchUser = async () => {
     try {
       if ( userData && userData.userId) {
-        const response = await axios.get(`${url}/id/${userData.userId}`);
+        const response = await axios.get(`${url}/id/${userData.userId}`, {
+          headers: {
+            Authorization: `${localStorage.getItem('token')}`
+          }});
         console.log({'user': response.data});
         setUser(response.data);
       }
@@ -51,7 +54,11 @@ function User({userData}) {
     try {
       await axios.put(`${url}/updateUser/${userData.userId}`, {
         field: editableField,
-        value: user[editableField]
+        value: user[editableField],
+      }, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`
+        }
       });
       setEditableField(null);
     } catch (error) {

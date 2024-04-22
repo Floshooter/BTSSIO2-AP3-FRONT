@@ -1,12 +1,14 @@
 import '../../assets/styles/Shop.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, ListGroup, Button } from 'react-bootstrap';
+import { Card, ListGroup, Button, Container, Row, Col } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const url = 'http://192.168.1.28:8001';
+// const imageUrl = 'http://localhost:8001/upload/products/';
 const Shop = ({ userData }) => {
+  console.log(userData);
   const [items, setItems] = useState([]);
   const [cart, setCart] = useState([]);
   // const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +21,11 @@ const Shop = ({ userData }) => {
 
   const fetchItems = async () => {
     try {
-      const items = await axios.get(`${url}/boutique`);
+      const items = await axios.get(`${url}/boutique`, {
+      headers: {
+          Authorization: `${localStorage.getItem('token')}`
+      }
+  })
       setItems(items.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des articles : ', error);
@@ -36,7 +42,11 @@ const Shop = ({ userData }) => {
         basePrice: item.price,
         userId: userData.userId
       };
-      const response = await axios.post('http://192.168.1.28:8001/article/add', article);
+      const response = await axios.post(`${url}/article/add`, article, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`
+      }});
+      
       console.log('Response from server:', response);
       console.log('Data from server:', response.data);
       toast.success('Le produit a été ajouté au favoris', {
@@ -76,7 +86,6 @@ const Shop = ({ userData }) => {
    
   return (
     <div>
-      <h1>Liste des articles :</h1>
       {/* <div>
         <input
           type="text"
@@ -89,25 +98,30 @@ const Shop = ({ userData }) => {
         {searchResultsMessage && <p>{searchResultsMessage}</p>}
       </div> */}
       {items && userData && userData.isConnected && (
-        <div className="card-grid-container">
-          {items.map((item, index) => (
-            <Card key={index} style={{ width: '18rem' }}>
-              <Card.Img variant="top" src={item.thumbnail} />
-              <Card.Body>
-                <Card.Title>{item.item_name}</Card.Title>
-                <Card.Text className="card-text">{item.price}€</Card.Text>
-              </Card.Body>
-              <Card.Body>
-                <Button variant="success" onClick={() => addItemToCart(item)}>
-                  Ajouter au panier
-                </Button>
-                <ToastContainer />
-              </Card.Body>
-            </Card>
-          ))}
-        </div>
+        <Container className="shop-container">
+          <h1>Liste des articles :</h1>
+          <Row>
+            {items.map((item, index) => (
+              <Col key={index} md={4} className="mb-4">
+                <Card>
+                  <Card.Img variant="top" src={`http://localhost:8001/upload/${item.thumbnail}`} alt={item.item_name} className="card-img" />
+                  <Card.Body>
+                    <Card.Title>{item.item_name}</Card.Title>
+                    <Card.Text className="card-text">{item.price}€</Card.Text>
+                  </Card.Body>
+                  <Card.Footer>
+                    <Button variant="success" onClick={() => addItemToCart(item)}>
+                      Ajouter au panier
+                    </Button>
+                    <ToastContainer />
+                  </Card.Footer>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Container>
       )}
-      {items && userData && !userData.isConnected || userData === null && (
+      {items && userData && (!userData.isConnected || userData === null) && (
         <div className="card-grid-container">
           {items.map((item, index) => (
             <Card key={index} style={{ width: '18rem' }}>
